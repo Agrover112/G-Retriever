@@ -1,3 +1,4 @@
+import os
 import contextlib
 import torch
 from torch.cuda.amp import autocast as autocast
@@ -13,6 +14,7 @@ EOS_USER = '[/INST]'
 EOS = '</s>'
 
 IGNORE_INDEX = -100
+access_token = os.getenv("HF_ACCESS_TOKEN") 
 
 
 class LLM(torch.nn.Module):
@@ -40,6 +42,7 @@ class LLM(torch.nn.Module):
             args.llm_model_path,
             torch_dtype=torch.float16,
             low_cpu_mem_usage=True,
+            token=access_token,
             **kwargs
         )
 
@@ -75,6 +78,8 @@ class LLM(torch.nn.Module):
 
     @property
     def device(self):
+
+        print("YO WE PRINTING THE MFING DEVICE OUT OF THIS OKAYYYY CAN YOU SEE THIS SHIZZ GGGEZ THIS IS THE DVICE",list(self.parameters())[0].device)
         return list(self.parameters())[0].device
 
     def maybe_autocast(self, dtype=torch.bfloat16):
@@ -96,8 +101,8 @@ class LLM(torch.nn.Module):
         # encode special tokens
         eos_tokens = self.tokenizer(EOS, add_special_tokens=False)
         eos_user_tokens = self.tokenizer(EOS_USER, add_special_tokens=False)
-        bos_embeds = self.word_embedding(self.tokenizer(BOS, add_special_tokens=False, return_tensors='pt').input_ids[0])
-        pad_embeds = self.word_embedding(torch.tensor(self.tokenizer.pad_token_id)).unsqueeze(0)
+        bos_embeds = self.word_embedding(self.tokenizer(BOS, add_special_tokens=False, return_tensors='pt').input_ids[0].to(self.model.device))
+        pad_embeds = self.word_embedding(torch.tensor(self.tokenizer.pad_token_id).to(self.model.device)).unsqueeze(0) # Cuda add
 
         batch_size = len(samples['id'])
         batch_inputs_embeds = []
@@ -145,8 +150,8 @@ class LLM(torch.nn.Module):
 
         # encode special tokens
         eos_user_tokens = self.tokenizer(EOS_USER, add_special_tokens=False)
-        bos_embeds = self.word_embedding(self.tokenizer(BOS, add_special_tokens=False, return_tensors='pt').input_ids[0])
-        pad_embeds = self.word_embedding(torch.tensor(self.tokenizer.pad_token_id)).unsqueeze(0)
+        bos_embeds = self.word_embedding(self.tokenizer(BOS, add_special_tokens=False, return_tensors='pt').input_ids[0].to(self.model.device)) # Cudaad
+        pad_embeds = self.word_embedding(torch.tensor(self.tokenizer.pad_token_id).to(self.model.device)).unsqueeze(0) # Cuda add
 
         batch_size = len(samples['id'])
         batch_inputs_embeds = []

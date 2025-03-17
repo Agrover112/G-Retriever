@@ -1,3 +1,4 @@
+import os
 import contextlib
 import torch
 import torch.nn as nn
@@ -17,6 +18,7 @@ EOS = '</s>'
 
 IGNORE_INDEX = -100
 
+access_token = os.getenv("HF_ACCESS_TOKEN") 
 
 class GraphLLM(torch.nn.Module):
 
@@ -32,7 +34,7 @@ class GraphLLM(torch.nn.Module):
         print('Loading LLAMA')
         kwargs = {
             "max_memory": {0: '80GiB', 1: '80GiB'},
-            "device_map": "auto",
+            "device_map": "cuda:0",
             "revision": "main",
         }
 
@@ -44,6 +46,7 @@ class GraphLLM(torch.nn.Module):
             args.llm_model_path,
             torch_dtype=torch.float16,
             low_cpu_mem_usage=True,
+            token=access_token,
             **kwargs
         )
 
@@ -125,8 +128,8 @@ class GraphLLM(torch.nn.Module):
         # encode special tokens
         eos_tokens = self.tokenizer(EOS, add_special_tokens=False)
         eos_user_tokens = self.tokenizer(EOS_USER, add_special_tokens=False)
-        bos_embeds = self.word_embedding(self.tokenizer(BOS, add_special_tokens=False, return_tensors='pt').input_ids[0])
-        pad_embeds = self.word_embedding(torch.tensor(self.tokenizer.pad_token_id)).unsqueeze(0)
+        bos_embeds = self.word_embedding(self.tokenizer(BOS, add_special_tokens=False, return_tensors='pt').input_ids[0].to(self.model.device))
+        pad_embeds = self.word_embedding(torch.tensor(self.tokenizer.pad_token_id).to(self.model.device)).unsqueeze(0)
 
         # encode graphs
         graph_embeds = self.encode_graphs(samples)
@@ -178,8 +181,8 @@ class GraphLLM(torch.nn.Module):
 
         # encode special tokens
         eos_user_tokens = self.tokenizer(EOS_USER, add_special_tokens=False)
-        bos_embeds = self.word_embedding(self.tokenizer(BOS, add_special_tokens=False, return_tensors='pt').input_ids[0])
-        pad_embeds = self.word_embedding(torch.tensor(self.tokenizer.pad_token_id)).unsqueeze(0)
+        bos_embeds = self.word_embedding(self.tokenizer(BOS, add_special_tokens=False, return_tensors='pt').input_ids[0].to(self.model.device))
+        pad_embeds = self.word_embedding(torch.tensor(self.tokenizer.pad_token_id).to(self.model.device)).unsqueeze(0)
 
         # encode graphs
         graph_embeds = self.encode_graphs(samples)

@@ -24,7 +24,7 @@ def main(args):
     seed = args.seed
     wandb.init(project=f"{args.project}",
                name=f"{args.dataset}_{args.model_name}_seed{seed}",
-               config=args)
+               config=args,mode="offline")
 
     seed_everything(seed=args.seed)
     print(args)

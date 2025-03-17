@@ -54,11 +54,13 @@ def step_one():
 
 def step_two():
     def _encode_questions():
+        print('Encoding questions...')
         q_embs = text2embedding(model, tokenizer, device, df.question.tolist())
         torch.save(q_embs, f'{path}/q_embs.pt')
 
     def _encode_graphs():
         image_ids = df.image_id.unique()
+        print('Encoding graphs...')
         for i in tqdm(image_ids):
             nodes = pd.read_csv(f'{path_nodes}/{i}.csv')
             edges = pd.read_csv(f'{path_edges}/{i}.csv')
@@ -81,7 +83,7 @@ def step_two():
 
 
 def generate_split():
-
+    print('Generating splits...')
     # Load the data
     path = "dataset/scene_graphs"
     questions = pd.read_csv(f"{path}/questions.csv")
@@ -95,6 +97,7 @@ def generate_split():
 
     # Split the image IDs into train, validation, and test sets
     train_ids, temp_ids = train_test_split(shuffled_image_ids, test_size=0.4, random_state=42)  # 60% train, 40% temporary
+    val_ids, test_ids = train_test_split(temp_ids, test_size=0.5, random_state=42)  # Split the 40% into two 20% splits
     val_ids, test_ids = train_test_split(temp_ids, test_size=0.5, random_state=42)  # Split the 40% into two 20% splits
 
     # Create a mapping from image ID to set label
