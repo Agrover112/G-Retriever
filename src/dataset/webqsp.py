@@ -22,7 +22,7 @@ class WebQSPDataset(Dataset):
         self.prompt = 'Please answer the given question.'
         self.graph = None
         self.graph_type = 'Knowledge Graph'
-        dataset = datasets.load_dataset("rmanluo/RoG-webqsp")
+        dataset = datasets.load_dataset("/leonardo/home/userexternal/agrover0/.cache/huggingface/datasets/rmanluo___ro_g-webqsp")
         self.dataset = datasets.concatenate_datasets([dataset['train'], dataset['validation'], dataset['test']])
         self.q_embs = torch.load(f'{path}/q_embs.pt')
 
@@ -61,7 +61,7 @@ class WebQSPDataset(Dataset):
 def preprocess():
     os.makedirs(cached_desc, exist_ok=True)
     os.makedirs(cached_graph, exist_ok=True)
-    dataset = datasets.load_dataset("rmanluo/RoG-webqsp")
+    dataset = datasets.load_dataset("/leonardo/home/userexternal/agrover0/.cache/huggingface/datasets/rmanluo___ro_g-webqsp")
     dataset = datasets.concatenate_datasets([dataset['train'], dataset['validation'], dataset['test']])
 
     q_embs = torch.load(f'{path}/q_embs.pt')

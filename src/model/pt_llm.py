@@ -25,7 +25,6 @@ class PromptTuningLLM(torch.nn.Module):
         self,
         init_prompt,
         args,
-        token=access_token,
         **kwargs
     ):
         super().__init__()
@@ -47,6 +46,7 @@ class PromptTuningLLM(torch.nn.Module):
             args.llm_model_path,
             torch_dtype=torch.float16,
             low_cpu_mem_usage=True,
+            token=os.getenv("HF_ACCESS_TOKEN") ,
             **kwargs
         )
 

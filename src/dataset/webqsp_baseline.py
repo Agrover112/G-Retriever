@@ -17,7 +17,7 @@ class WebQSPBaselineDataset(Dataset):
         self.prompt = 'Please answer the given question.\nAnswer:'
         self.graph = None
         self.graph_type = 'Knowledge Graph'
-        dataset = datasets.load_dataset("rmanluo/RoG-webqsp")
+        dataset = datasets.load_dataset("/leonardo/home/userexternal/agrover0/.cache/huggingface/datasets/rmanluo___ro_g-webqsp")
         self.dataset = datasets.concatenate_datasets([dataset['train'], dataset['validation'], dataset['test']])
 
     def __len__(self):

@@ -16,7 +16,7 @@ path_graphs = f'{path}/graphs'
 
 
 def step_one():
-    dataset = load_dataset("rmanluo/RoG-webqsp")
+    dataset = load_dataset("/leonardo/home/userexternal/agrover0/.cache/huggingface/datasets/rmanluo___ro_g-webqsp")
     dataset = concatenate_datasets([dataset['train'], dataset['validation'], dataset['test']])
 
     os.makedirs(path_nodes, exist_ok=True)
@@ -43,7 +43,7 @@ def step_one():
 
 def generate_split():
 
-    dataset = load_dataset("rmanluo/RoG-webqsp")
+    dataset = load_dataset("/leonardo/home/userexternal/agrover0/.cache/huggingface/datasets/rmanluo___ro_g-webqsp")
 
     train_indices = np.arange(len(dataset['train']))
     val_indices = np.arange(len(dataset['validation'])) + len(dataset['train'])
@@ -72,7 +72,7 @@ def generate_split():
 
 def step_two():
     print('Loading dataset...')
-    dataset = load_dataset("rmanluo/RoG-webqsp")
+    dataset = load_dataset("/leonardo/home/userexternal/agrover0/.cache/huggingface/datasets/rmanluo___ro_g-webqsp")
     dataset = concatenate_datasets([dataset['train'], dataset['validation'], dataset['test']])
     questions = [i['question'] for i in dataset]
 

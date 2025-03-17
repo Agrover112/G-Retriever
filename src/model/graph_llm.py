@@ -47,7 +47,7 @@ class GraphLLM(torch.nn.Module):
             args.llm_model_path,
             torch_dtype=torch.float16,
             low_cpu_mem_usage=True,
-            token=access_token,
+            token=os.getenv("HF_ACCESS_TOKEN") ,
             **kwargs
         )
 
