@@ -34,8 +34,8 @@ class GraphLLM(torch.nn.Module):
 
         print('Loading LLAMA')
         kwargs = {
-            "max_memory": {0: '80GiB', 1: '80GiB'},
-            "device_map": "cuda:0",
+            "max_memory": {0: '64GiB', 1: '64GiB'},
+            "device_map": "auto", #auto for 2
             "revision": "main",
         }
 

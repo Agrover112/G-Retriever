@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv, TransformerConv, GATConv
-
+from src.model.sgformer import SGFormer
 
 class GCN(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers, dropout, num_heads=-1):
@@ -89,8 +89,29 @@ class GAT(torch.nn.Module):
         return x, edge_attr
 
 
+class SGF(torch.nn.Module):
+    """Wrapper for SGFormer model """
+    def __init__(self, in_channels, hidden_channels, out_channels): #Added aggregate
+        super(SGF,self).__init__()
+        self.sgformer = SGFormer(
+            in_channels=in_channels,
+            hidden_channels=hidden_channels,
+            out_channels=out_channels,
+            gnn_num_layers=4,
+            trans_num_layers=3        
+        )
+
+    def reset_parameters(self):
+        self.sgformer.reset_parameters()
+
+    def forward(self, x, edge_index, edge_attr=None, batch=None):
+        # SGFormer doesn't use edge_attr, so we ignore it.
+        x = self.sgformer(x, edge_index, batch=batch)
+        return x, None  # Return None for edge_attr
+
 load_gnn_model = {
     'gcn': GCN,
     'gat': GAT,
     'gt': GraphTransformer,
+    'sgformer': SGF,
 }

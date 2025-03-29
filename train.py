@@ -27,8 +27,13 @@ def main(args):
                config=args,mode="offline")
 
     seed_everything(seed=args.seed)
-    print(args)
+    print("WE PRINTING THE ARGS",args)
 
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    torch.cuda.empty_cache()
+    print(f"Allocated: {torch.cuda.memory_allocated(device) / (1024**2):.2f} MB")
+    print(f"Reserved:  {torch.cuda.memory_reserved(device) / (1024**2):.2f} MB")
+    print("Dataset Loading",args.dataset)
     dataset = load_dataset[args.dataset]()
     idx_split = dataset.get_idx_split()
 
@@ -41,10 +46,20 @@ def main(args):
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size, drop_last=False, pin_memory=True, shuffle=False, collate_fn=collate_fn)
     test_loader = DataLoader(test_dataset, batch_size=args.eval_batch_size, drop_last=False, pin_memory=True, shuffle=False, collate_fn=collate_fn)
 
+    print(f"Allocated: {torch.cuda.memory_allocated(device) / (1024**2):.2f} MB")
+    print(f"Reserved:  {torch.cuda.memory_reserved(device) / (1024**2):.2f} MB")
+
+    print("Time to build the mfing MODEL",args.llm_model_name)
+    print(args.llm_model_path)
+    print(args.llm_frozen)
+    print(args.max_txt_len)
+    print(args.max_memory)
+    print(dataset.prompt)
     # Step 3: Build Model
     args.llm_model_path = llama_model_path[args.llm_model_name]
     model = load_model[args.model_name](graph_type=dataset.graph_type, args=args, init_prompt=dataset.prompt)
-
+    print(f"Allocated: {torch.cuda.memory_allocated(device) / (1024**2):.2f} MB")
+    print(f"Reserved:  {torch.cuda.memory_reserved(device) / (1024**2):.2f} MB")
     # Step 4 Set Optimizer
     params = [p for _, p in model.named_parameters() if p.requires_grad]
     optimizer = torch.optim.AdamW(
@@ -53,19 +68,23 @@ def main(args):
     )
     trainable_params, all_param = model.print_trainable_params()
     print(f"trainable params: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param}")
-
+    print(f"Allocated: {torch.cuda.memory_allocated(device) / (1024**2):.2f} MB")
+    print(f"Reserved:  {torch.cuda.memory_reserved(device) / (1024**2):.2f} MB")
     # Step 5. Training
     num_training_steps = args.num_epochs * len(train_loader)
+    #print(f"Num Training Steps: {num_training_steps}")
     progress_bar = tqdm(range(num_training_steps))
     best_val_loss = float('inf')
+    torch.cuda.empty_cache()
 
     for epoch in range(args.num_epochs):
-
+        print(f"Allocated: {torch.cuda.memory_allocated(device) / (1024**2):.2f} MB")
+        print(f"Reserved:  {torch.cuda.memory_reserved(device) / (1024**2):.2f} MB")
         model.train()
         epoch_loss, accum_loss = 0., 0.
 
         for step, batch in enumerate(train_loader):
-
+            print("Training Step",step)
             optimizer.zero_grad()
             loss = model(batch)
             loss.backward()
