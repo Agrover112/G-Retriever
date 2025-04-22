@@ -115,19 +115,30 @@ class GFLLM(torch.nn.Module):
 
     def encode_graphs(self, samples):
         graphs = samples['graph']
+        print("Number of graphs in batch:", len(graphs))
+        print("Graph nodes shape:", graphs.x.shape)
+        node_counts = torch.bincount(graphs.batch)
+        print("Number of nodes in each graph:", node_counts)
+        print("Max number of nodes in a graph:", node_counts.max().item())
+        print("Avg. number of nodes in a graph:", node_counts.float().mean().item())
+        print("Graph edges shape:", graphs.edge_index.shape)
         graphs = graphs.to(self.model.device)
         # Pass edge_attr and batch correctly, and handle the output
         n_embeds, _ = self.graph_encoder(graphs.x, graphs.edge_index.long(),batch=graphs.batch, edge_attr=graphs.edge_attr)
+        print("n_embeds",n_embeds.shape)
         g_embeds = scatter(n_embeds, graphs.batch, dim=0, reduce='mean')
+        print("Graph emebeds before projection g_embeds",g_embeds.shape)
         return g_embeds
     
     def forward(self, samples):
 
         # encode description, questions and labels
         questions = self.tokenizer(samples["question"], add_special_tokens=False)
+        print("Number of tokens in Question:", len(questions.input_ids[0]))
         descriptions = self.tokenizer(samples["desc"], add_special_tokens=False)
+        print("Number of tokens in Textualize:", len(descriptions.input_ids[0]))
         labels = self.tokenizer(samples["label"], add_special_tokens=False)
-
+        print("Number of tokens in Label",len(labels.input_ids[0]))
         # encode special tokens
         eos_tokens = self.tokenizer(EOS, add_special_tokens=False)
         eos_user_tokens = self.tokenizer(EOS_USER, add_special_tokens=False)
@@ -137,7 +148,7 @@ class GFLLM(torch.nn.Module):
         # encode graphs
         graph_embeds = self.encode_graphs(samples)
         graph_embeds = self.projector(graph_embeds)
-
+        print("Graph embeds after projection g_embeds",graph_embeds.shape)
         batch_size = len(samples['id'])
         batch_inputs_embeds = []
         batch_attention_mask = []
@@ -147,7 +158,10 @@ class GFLLM(torch.nn.Module):
             label_input_ids = labels.input_ids[i][:self.max_new_tokens] + eos_tokens.input_ids
             input_ids = descriptions.input_ids[i][:self.max_txt_len] + questions.input_ids[i] + eos_user_tokens.input_ids + label_input_ids
             inputs_embeds = self.word_embedding(torch.tensor(input_ids).to(self.model.device))
+            print("Final number of graph token:",graph_embeds[i].unsqueeze(0).shape)
             inputs_embeds = torch.cat([bos_embeds, graph_embeds[i].unsqueeze(0), inputs_embeds], dim=0)
+            print("Final number of input token:",inputs_embeds.shape)
+
 
             batch_inputs_embeds.append(inputs_embeds)
             batch_attention_mask.append([1] * inputs_embeds.shape[0])
@@ -165,7 +179,8 @@ class GFLLM(torch.nn.Module):
         inputs_embeds = torch.stack(batch_inputs_embeds, dim=0).to(self.model.device)
         attention_mask = torch.tensor(batch_attention_mask).to(self.model.device)
         label_input_ids = torch.tensor(batch_label_input_ids).to(self.model.device)
-
+        print("Final number of input token after padding:",inputs_embeds.shape)
+        
         with self.maybe_autocast():
             outputs = self.model(
                 inputs_embeds=inputs_embeds,
@@ -173,6 +188,25 @@ class GFLLM(torch.nn.Module):
                 return_dict=True,
                 labels=label_input_ids,
             )
+        
+        with self.maybe_autocast():
+            inference_ids = self.model.generate(
+            inputs_embeds=inputs_embeds,
+            max_new_tokens=self.max_new_tokens,
+            attention_mask=attention_mask,
+            # do_sample=True,  # Uncomment if you want sampling.
+            use_cache=True  # IMPORTANT!
+        )
+
+        token_counts = [seq.shape[0] for seq in inference_ids]
+        avg_tokens = sum(token_counts) / len(token_counts)
+        print("Number of tokens generated:", len(token_counts))
+        print("Average number of tokens generated:", avg_tokens)
+
+        predictions = self.tokenizer.batch_decode(inference_ids, skip_special_tokens=True)
+        #for i, seq in enumerate(inference_ids):
+            #print(f"Sample {i} generated {seq.shape[0]} tokens")
+            #print(f"Sample {i} generated {self.tokenizer.decode(seq, skip_special_tokens=True)}")
 
         return outputs.loss
 

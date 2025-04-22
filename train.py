@@ -23,7 +23,7 @@ def main(args):
     # Step 1: Set up wandb
     seed = args.seed
     wandb.init(project=f"{args.project}",
-               name=f"{args.dataset}_{args.model_name}_seed{seed}",
+               name=f"{args.dataset}_{args.model_name}_{args.pooling}_seed{seed}",
                config=args,mode="offline")
 
     seed_everything(seed=args.seed)
@@ -77,18 +77,22 @@ def main(args):
     best_val_loss = float('inf')
     torch.cuda.empty_cache()
 
+    epoch_memory_usage = []
+    step_memory_usage = []
+
     for epoch in range(args.num_epochs):
         print(f"Allocated: {torch.cuda.memory_allocated(device) / (1024**2):.2f} MB")
         print(f"Reserved:  {torch.cuda.memory_reserved(device) / (1024**2):.2f} MB")
         model.train()
         epoch_loss, accum_loss = 0., 0.
+        step_memory_usage = []
 
         for step, batch in enumerate(train_loader):
             print("Training Step",step)
             optimizer.zero_grad()
             loss = model(batch)
             loss.backward()
-
+            
             clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
 
             if (step + 1) % args.grad_steps == 0:
@@ -104,6 +108,7 @@ def main(args):
                 accum_loss = 0.
 
             progress_bar.update(1)
+            step_memory_usage.append(torch.cuda.max_memory_allocated(device) / (1024**2))
 
         print(f"Epoch: {epoch}|{args.num_epochs}: Train Loss (Epoch Mean): {epoch_loss / len(train_loader)}")
         wandb.log({'Train Loss (Epoch Mean)': epoch_loss / len(train_loader)})
@@ -119,6 +124,11 @@ def main(args):
             print(f"Epoch: {epoch}|{args.num_epochs}: Val Loss: {val_loss}")
             wandb.log({'Val Loss': val_loss})
 
+        avg_step_memory = sum(step_memory_usage) / len(step_memory_usage)
+        epoch_memory_usage.append(avg_step_memory)
+        wandb.log({'Avg Step Memory (Epoch)': avg_step_memory})
+        print(f"Epoch: {epoch}|{args.num_epochs}: Avg Step Memory: {avg_step_memory:.2f} MB")
+
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             _save_checkpoint(model, optimizer, epoch, args, is_best=True)
@@ -130,12 +140,16 @@ def main(args):
             print(f'Early stop at epoch {epoch}')
             break
 
+    avg_epoch_memory = sum(epoch_memory_usage) / len(epoch_memory_usage)
+    wandb.log({'Avg Epoch Memory (Overall)': avg_epoch_memory})
+    print(f"Avg Epoch Memory (Overall): {avg_epoch_memory:.2f} MB")
+
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
 
     # Step 5. Evaluating
     os.makedirs(f'{args.output_dir}/{args.dataset}', exist_ok=True)
-    path = f'{args.output_dir}/{args.dataset}/model_name_{args.model_name}_llm_model_name_{args.llm_model_name}_llm_frozen_{args.llm_frozen}_max_txt_len_{args.max_txt_len}_max_new_tokens_{args.max_new_tokens}_gnn_model_name_{args.gnn_model_name}_patience_{args.patience}_num_epochs_{args.num_epochs}_seed{seed}.csv'
+    path = f'{args.output_dir}/{args.dataset}/model_name_{args.model_name}_pooling_{args.pooling}_llm_model_name_{args.llm_model_name}_llm_frozen_{args.llm_frozen}_max_txt_len_{args.max_txt_len}_max_new_tokens_{args.max_new_tokens}_gnn_model_name_{args.gnn_model_name}_patience_{args.patience}_num_epochs_{args.num_epochs}_seed{seed}.csv'
     print(f'path: {path}')
 
     model = _reload_best_model(model, args)

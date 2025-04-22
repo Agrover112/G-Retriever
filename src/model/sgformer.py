@@ -214,8 +214,9 @@ class SGFormer(torch.nn.Module):
             x = self.graph_weight * x2 + (1 - self.graph_weight) * x1
         else:
             x = torch.cat((x1, x2), dim=1)
-        x = self.fc(x)
-        return F.log_softmax(x, dim=-1)
+        #x = self.fc(x)
+        return x
+        #return F.log_softmax(x, dim=-1)
 
 if __name__ == '__main__':
     model = SGFormer(128, 128, 128)
