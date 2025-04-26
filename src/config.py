@@ -43,7 +43,7 @@ def parse_args_llama():
     parser.add_argument("--gnn_hidden_dim", type=int, default=1024)
     parser.add_argument("--gnn_num_heads", type=int, default=4)
     parser.add_argument("--gnn_dropout", type=float, default=0.0)
-    parser.add_argument("--pooling", type=str, default='mean',choices=['mean', 'topk', 'sag','sagM', 'virtual','none'])
+    parser.add_argument("--pooling", type=str, default='mean',choices=['mean', 'topk', 'sag','diffpool','mincutpool',  'sagM', 'virtual','none'])
     parser.add_argument('--pool_ratio', type=float, default=0.5)
     parser.add_argument('--gnn_num_virtual_tokens', type=int, default=5)
 

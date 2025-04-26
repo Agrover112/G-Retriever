@@ -1,8 +1,22 @@
 import torch
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv, TransformerConv, GATConv
+from torch_geometric.nn.dense import DenseSAGEConv
 from src.model.sgformer import SGFormer
 
+class AssignmentSAGEConv(torch.nn.Module):
+    def __init__(self, input_dim, hidden_dim, output_dim):
+        super().__init__()
+        self.conv1 = DenseSAGEConv(input_dim, hidden_dim)
+        self.relu = torch.nn.ReLU()
+        self.conv2 = DenseSAGEConv(hidden_dim, output_dim)
+
+    def forward(self, x, adj, mask=None):
+        x = self.conv1(x, adj, mask)
+        x = self.relu(x)
+        # The second layer also needs adj and mask
+        x = self.conv2(x, adj, mask)
+        return x
 class GCN(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers, dropout, num_heads=-1):
         super(GCN, self).__init__()

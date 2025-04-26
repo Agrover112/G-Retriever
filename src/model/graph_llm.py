@@ -8,7 +8,10 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from torch_scatter import scatter
 from torch_geometric.nn import TopKPooling, SAGPooling
 from torch_geometric.nn import GCNConv, GATConv, TransformerConv
-from src.model.gnn import load_gnn_model
+from torch_geometric.nn import Linear
+from torch_geometric.nn.dense import DenseSAGEConv, dense_diff_pool, dense_mincut_pool
+from torch_geometric.utils import to_dense_batch, to_dense_adj
+from src.model.gnn import load_gnn_model, AssignmentSAGEConv
 from peft import (
     LoraConfig,
     get_peft_model,
@@ -39,6 +42,7 @@ class GraphLLM(torch.nn.Module):
         self.max_new_tokens = args.max_new_tokens
         self.pooling_type = args.pooling  #  ['mean', 'topk', 'sag', or 'virtual']
         self.pool_ratio = args.pool_ratio  #  ratio for pooling (e.g., 0.5)
+        self.gnn_num_virtual_tokens = args.gnn_num_virtual_tokens  # number of virtual tokens
 
         print('Loading LLAMA')
         kwargs = {
@@ -102,6 +106,40 @@ class GraphLLM(torch.nn.Module):
             self.pooling = TopKPooling(in_channels=args.gnn_hidden_dim, ratio=self.pool_ratio).to(self.device)
         elif self.pooling_type == 'sag':
             self.pooling = SAGPooling(in_channels=args.gnn_hidden_dim, ratio=self.pool_ratio).to(self.device)
+        elif self.pooling_type == 'diffpool':
+            # Use DenseSAGEConv based GNN for assignment
+            assign_input_dim = args.gnn_hidden_dim
+            assign_hidden_dim = args.gnn_hidden_dim # Or could be different
+            assign_output_dim = args.gnn_num_virtual_tokens # Target k clusters
+
+            # Use DenseSAGEConv for assignment(SEL stage) as per DiffPool paper.
+            self.assignment_gnn = self.assignment_gnn = AssignmentSAGEConv(
+                input_dim=assign_input_dim,
+                hidden_dim=assign_hidden_dim,
+                output_dim=assign_output_dim
+            ).to(self.model.device).to(self.model.device)
+
+            print(f"Initialized DiffPool with k={args.gnn_num_virtual_tokens} clusters and DenseSAGE assignment GNN.")
+        elif self.pooling_type == 'mincutpool':
+            # Use MLP for SEL assignment as per MinCutPool paper.
+
+            assign_input_dim = args.gnn_hidden_dim
+
+            assign_hidden_dim = args.gnn_hidden_dim # Or could be different
+
+            assign_output_dim = args.gnn_num_virtual_tokens # Target k clusters
+            
+            self.assignment_mlp = nn.Sequential(
+
+                Linear(assign_input_dim, assign_hidden_dim),
+
+                nn.ReLU(),
+
+                Linear(assign_hidden_dim, assign_output_dim)
+
+            ).to(self.model.device)
+
+            print(f"Initialized MinCutPool with k={args.gnn_num_virtual_tokens} clusters and assignment MLP.")
         elif self.pooling_type == 'virtual':
             
             # Virtual nodes are processed *after* initial encoding (dim = gnn_hidden_dim)
@@ -128,11 +166,20 @@ class GraphLLM(torch.nn.Module):
         else:
             raise ValueError("Invalid pooling type. Choose one of: 'mean', 'topk', 'sag','sagM', 'virtual'.")
 
+        # self.projector = nn.Sequential(
+        #     nn.Linear(args.gnn_hidden_dim, 2048),
+        #     #nn.Sigmoid(),
+        #     nn.ReLU(),
+        #     nn.Linear(2048, 4096),
+        # ).to(self.model.device)
         self.projector = nn.Sequential(
-            nn.Linear(args.gnn_hidden_dim, 2048),
-            nn.Sigmoid(),
-            nn.Linear(2048, 4096),
+            nn.Linear(args.gnn_hidden_dim, 4096),
+            #nn.Sigmoid(),
+            nn.ReLU(),
+            nn.Linear(4096, 4096),
         ).to(self.model.device)
+
+
 
         self.word_embedding = self.model.model.get_input_embeddings()
 
@@ -168,6 +215,8 @@ class GraphLLM(torch.nn.Module):
         n_embeds, _ = self.graph_encoder(graphs.x, graphs.edge_index.long(), graphs.edge_attr)
         print("n_embeds",n_embeds.shape)
 
+        aux_loss1 = torch.tensor(0.0, device=self.device)
+        aux_loss2 = torch.tensor(0.0, device=self.device)
         # Pooling: Perform pooling on nodes.
         if self.pooling_type == 'mean':
             g_embeds = scatter(n_embeds, graphs.batch, dim=0, reduce='mean')  # shape: [batch, hidden_dim]
@@ -180,6 +229,24 @@ class GraphLLM(torch.nn.Module):
                 tokens = pooled_x[batch == b]
                 g_embeds.append(tokens)
             # At this point, you'll need to later pad these tokens per sample.
+        elif self.pooling_type in ['diffpool', 'mincutpool']:
+            batch_vector = graphs.batch
+            x_dense, mask = to_dense_batch(n_embeds, batch_vector) # [B, N_max, H]
+            adj_dense = to_dense_adj(graphs.edge_index, batch_vector) # [B, N_max, N_max]
+            if self.pooling_type == 'diffpool':
+                # Use assignment GNN (DenseSAGEConv based)
+                s_logits = self.assignment_gnn(x_dense, adj_dense, mask) # [B, N_max, k]
+                g_embeds, _, aux_loss1, aux_loss2 = dense_diff_pool(x=x_dense, adj=adj_dense, s=s_logits, mask=mask
+                    ) # Output g_embeds shape: [B, k, H]
+            else: # mincutpool
+                # Use assignment MLP (Linear based) - applied per node
+                # Reshape for MLP: [B*N_max, H] -> project -> [B*N_max, k] -> reshape back
+                B, N_max, H_gnn = x_dense.shape
+                s_logits = self.assignment_mlp(x_dense.view(-1, H_gnn)) # [B*N_max, k]
+                s_logits = s_logits.view(B, N_max,self.gnn_num_virtual_tokens) # [B, N_max, k]
+                
+                g_embeds, _, aux_loss1, aux_loss2 = dense_mincut_pool(x=x_dense, adj=adj_dense, s=s_logits, mask=mask) 
+                # Output g_embeds shape: [B, k, H] pooled_batch_vector not needed as output is [B, k, H]
         elif self.pooling_type == 'virtual':
             k = self.num_virtual_nodes
             num_graphs = len(torch.unique(graphs.batch))
@@ -269,7 +336,7 @@ class GraphLLM(torch.nn.Module):
         print("Graph embeds (pooled) shape:", g_embeds.shape if isinstance(g_embeds, torch.Tensor) else [x.shape for x in g_embeds])
         #print("Graph emebeds before projection g_embeds",g_embeds.shape)
 
-        return g_embeds
+        return g_embeds, aux_loss1, aux_loss2
  
     def forward(self, samples):
         # encode description, questions, and labels
@@ -291,12 +358,12 @@ class GraphLLM(torch.nn.Module):
         ).unsqueeze(0)
 
         # encode graphs and then project graph tokens
-        graph_embeds = self.encode_graphs(samples)  # This may have shape:
+        graph_embeds, aux_loss1, aux_loss2 = self.encode_graphs(samples)  # This may have shape:
         # For mean pooling: [batch, 1, hidden_dim]
         # For topk/sag pooling: list of tensors, variable shapes per graph
         # For virtual pooling: [batch, num_virtual_tokens, hidden_dim]
-        if self.pooling_type in ['mean', 'virtual']:
-            # Apply projector elementwise: reshape to 2D, project, then reshape back
+        if self.pooling_type in ['mean', 'virtual','diffpool','mincutpool']:
+            # Apply projector elementwise: reshape to 2D, project-up, then reshape back to LLM Hidden Dim Size
             b, t, _ = graph_embeds.shape
             graph_embeds = graph_embeds.view(b * t, -1)
             graph_embeds = self.projector(graph_embeds)
@@ -324,7 +391,7 @@ class GraphLLM(torch.nn.Module):
             inputs_embeds = self.word_embedding(torch.tensor(input_ids).to(self.model.device))
             
             # Determine graph tokens for this sample:
-            if self.pooling_type in ['mean', 'virtual']:
+            if self.pooling_type in ['mean', 'virtual','diffpool', 'mincutpool']:
                 graph_tokens = graph_embeds[i]  # shape: [t, 4096] where t is 1 or num_virtual_tokens
             elif self.pooling_type in ['topk', 'sag', 'sagM','none']:
                 graph_tokens = graph_embeds[i]  # already a tensor from the list for graph i
@@ -382,7 +449,8 @@ class GraphLLM(torch.nn.Module):
             #print(f"Sample {i} generated {seq.shape[0]} tokens")
             #print(f"Sample {i} generated {self.tokenizer.decode(seq, skip_special_tokens=True)}")
         
-        return outputs.loss
+        
+        return outputs.loss + aux_loss1 + aux_loss2 if self.pooling_type in ['diffpool', 'mincutpool'] else outputs.loss
 
     def inference(self, samples):
         # Similar to forward, but without computing loss.
@@ -391,8 +459,8 @@ class GraphLLM(torch.nn.Module):
         eos_user_tokens = self.tokenizer(EOS_USER, add_special_tokens=False)
         bos_embeds = self.word_embedding(self.tokenizer(BOS, add_special_tokens=False, return_tensors='pt').input_ids[0].to(self.model.device))
         pad_embeds = self.word_embedding(torch.tensor(self.tokenizer.pad_token_id).to(self.model.device)).unsqueeze(0)
-        graph_embeds = self.encode_graphs(samples)
-        if self.pooling_type in ['mean', 'virtual']:
+        graph_embeds ,_, _= self.encode_graphs(samples)
+        if self.pooling_type in ['mean', 'virtual','diffpool','mincutpool']:
             b, t, _ = graph_embeds.shape
             graph_embeds = graph_embeds.view(b*t, -1)
             graph_embeds = self.projector(graph_embeds)
@@ -407,7 +475,7 @@ class GraphLLM(torch.nn.Module):
         for i in range(batch_size):
             input_ids = descriptions.input_ids[i][:self.max_txt_len] + questions.input_ids[i] + eos_user_tokens.input_ids
             inputs_embeds = self.word_embedding(torch.tensor(input_ids).to(self.model.device))
-            if self.pooling_type in ['mean', 'virtual']:
+            if self.pooling_type in ['mean', 'virtual','diffpool', 'mincutpool']:
                 graph_tokens = graph_embeds[i]
             elif self.pooling_type in ['topk', 'sag', 'sagM', 'none']:
                 graph_tokens = graph_embeds[i]
