@@ -23,7 +23,7 @@ def main(args):
     # Step 1: Set up wandb
     seed = args.seed
     wandb.init(project=f"{args.project}",
-               name=f"{args.dataset}_{args.model_name}_{args.pooling}_seed{seed}",
+               name=f"{args.dataset}_{args.model_name}_{args.pooling}_{args.gnn_num_virtual_tokens}seed{seed}",
                config=args,mode="offline")
 
     seed_everything(seed=args.seed)
@@ -149,7 +149,7 @@ def main(args):
 
     # Step 5. Evaluating
     os.makedirs(f'{args.output_dir}/{args.dataset}', exist_ok=True)
-    path = f'{args.output_dir}/{args.dataset}/model_name_{args.model_name}_pooling_{args.pooling}_llm_model_name_{args.llm_model_name}_llm_frozen_{args.llm_frozen}_max_txt_len_{args.max_txt_len}_max_new_tokens_{args.max_new_tokens}_gnn_model_name_{args.gnn_model_name}_patience_{args.patience}_num_epochs_{args.num_epochs}_seed{seed}.csv'
+    path = f'{args.output_dir}/{args.dataset}/model_name_{args.model_name}_pooling_{args.pooling}_llm_model_name_{args.llm_model_name}_llm_frozen_{args.llm_frozen}_max_txt_len_{args.max_txt_len}_max_new_tokens_{args.max_new_tokens}_gnn_model_name_{args.gnn_model_name}_gnn_num_virtual_tokens_{args.gnn_num_virtual_tokens}_patience_{args.patience}_num_epochs_{args.num_epochs}_seed{seed}.csv'
     print(f'path: {path}')
 
     model = _reload_best_model(model, args)

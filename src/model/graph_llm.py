@@ -3,6 +3,7 @@ import contextlib
 import os
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from torch.cuda.amp import autocast as autocast
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from torch_scatter import scatter
@@ -37,6 +38,8 @@ class GraphLLM(torch.nn.Module):
         self.gnn_model_name = args.gnn_model_name
         self.gnn_in_dim = args.gnn_in_dim
         self.gnn_hidden_dim = args.gnn_hidden_dim
+        self.use_ones_features=getattr(args,'use_ones_features',False)
+        self.ones_feature_dim=1024
 
         self.max_txt_len = args.max_txt_len
         self.max_new_tokens = args.max_new_tokens
@@ -90,14 +93,28 @@ class GraphLLM(torch.nn.Module):
         self.model = model
         print('Finish loading LLAMA!')
 
-        self.graph_encoder = load_gnn_model[args.gnn_model_name](
+        if self.use_ones_features:
+            print(f"GNN will use 'ones' features with dimension: {self.ones_feature_dim}")
+        else:
+            print(f"GNN will use original features with dimension: {args.gnn_in_dim}")
+
+        if args.gnn_model_name == 'sgformer':
+            self.graph_encoder = load_gnn_model[args.gnn_model_name](
+            in_channels=args.gnn_in_dim,
+            out_channels=args.gnn_hidden_dim,
+            hidden_channels=args.gnn_hidden_dim,
+            num_layers=args.gnn_num_layers,
+            tf_num_layers=1,
+            ).to(self.model.device)
+        else:
+            self.graph_encoder = load_gnn_model[args.gnn_model_name](
             in_channels=args.gnn_in_dim,
             out_channels=args.gnn_hidden_dim,
             hidden_channels=args.gnn_hidden_dim,
             num_layers=args.gnn_num_layers,
             dropout=args.gnn_dropout,
             num_heads=args.gnn_num_heads,
-        ).to(self.model.device)
+            ).to(self.model.device)
 
         # Set Pooling method.
         if self.pooling_type == 'mean':
@@ -141,6 +158,13 @@ class GraphLLM(torch.nn.Module):
 
             print(f"Initialized MinCutPool with k={args.gnn_num_virtual_tokens} clusters and assignment MLP.")
         elif self.pooling_type == 'virtual':
+            """
+            Adopted from:
+            `Query-Aware Learnable Graph Pooling Tokens as Prompt for Large Language Models`
+            by Wooyoung Kim, Byungyoon Park, Wooju Kim
+            https://arxiv.org/abs/2501.17549
+            """
+
             
             # Virtual nodes are processed *after* initial encoding (dim = gnn_hidden_dim)
             self.num_virtual_nodes = args.gnn_num_virtual_tokens
@@ -163,21 +187,25 @@ class GraphLLM(torch.nn.Module):
         elif self.pooling_type == 'none':
             self.pooling = None  # No pooling needed
             print("Using no pooling - passing all node embeddings directly")
+        elif self.pooling_type == 'randk': # New pooling type
+            self.pooling_layer = None
+            print(f"Using random k-token pooling with k={self.gnn_num_virtual_tokens}.")
         else:
-            raise ValueError("Invalid pooling type. Choose one of: 'mean', 'topk', 'sag','sagM', 'virtual'.")
+            raise ValueError("Invalid pooling type. Choose one of: 'mean', 'topk', 'sag','sagM', 'virtual', 'randk'")
 
-        # self.projector = nn.Sequential(
-        #     nn.Linear(args.gnn_hidden_dim, 2048),
-        #     #nn.Sigmoid(),
-        #     nn.ReLU(),
-        #     nn.Linear(2048, 4096),
-        # ).to(self.model.device)
-        self.projector = nn.Sequential(
-            nn.Linear(args.gnn_hidden_dim, 4096),
-            #nn.Sigmoid(),
-            nn.ReLU(),
-            nn.Linear(4096, 4096),
-        ).to(self.model.device)
+
+        if self.pooling_type in ['virtual']:
+            self.projector = nn.Sequential(  # Used by LGPT paper
+                nn.Linear(args.gnn_hidden_dim, 4096),
+                nn.ReLU(),
+                nn.Linear(4096, 4096),
+            ).to(self.model.device)
+        else: #normal 
+            self.projector = nn.Sequential(  
+                nn.Linear(args.gnn_hidden_dim, 2048),
+                nn.Sigmoid(),
+                nn.Linear(2048, 4096),
+            ).to(self.model.device)
 
 
 
@@ -212,8 +240,26 @@ class GraphLLM(torch.nn.Module):
         print("Avg. number of nodes in a graph:", node_counts.float().mean().item())
         print("Graph edges shape:", graphs.edge_index.shape)
         graphs = graphs.to(self.model.device)
-        n_embeds, _ = self.graph_encoder(graphs.x, graphs.edge_index.long(), graphs.edge_attr)
+
+        if self.use_ones_features:
+            # Create 'ones' features if the flag is set
+            num_nodes = graphs.num_nodes
+            # Use the dtype of the model or a default like float16
+            dtype_to_use = next(self.graph_encoder.parameters()).dtype if hasattr(self.graph_encoder, 'parameters') and list(self.graph_encoder.parameters()) else torch.float16
+            gnn_input_features = torch.ones(num_nodes, self.ones_feature_dim,device=self.device, dtype=dtype_to_use)
+            # print(f"Using ones features for GNN input, shape: {gnn_input_features.shape}")
+        else:
+            gnn_input_features=graphs.x
+
+
+
+        if self.gnn_model_name == 'sgformer':
+            # Use the graph encoder to get node embeddings
+            n_embeds, _ = self.graph_encoder(gnn_input_features, graphs.edge_index.long(),batch=graphs.batch)
+        else:
+            n_embeds, _ = self.graph_encoder(gnn_input_features, graphs.edge_index.long(), graphs.edge_attr)
         print("n_embeds",n_embeds.shape)
+        n_embeds =F.relu(n_embeds) # TESTING
 
         aux_loss1 = torch.tensor(0.0, device=self.device)
         aux_loss2 = torch.tensor(0.0, device=self.device)
@@ -328,6 +374,30 @@ class GraphLLM(torch.nn.Module):
                     graph_nodes = graph_nodes[indices]
                     
                 g_embeds.append(graph_nodes)
+        elif self.pooling_type == 'randk':
+            k = self.gnn_num_virtual_tokens  # Fixed number of tokens to select
+            unique_batches = torch.unique(graphs.batch)
+            g_embeds = []  # List to store graph embeddings
+
+            for b in unique_batches:
+                # Get nodes for this graph
+                mask = (graphs.batch == b)
+                graph_nodes = n_embeds[mask]  # Shape: [num_nodes_in_graph, hidden_dim]
+
+                # Randomly select k nodes (or all nodes if num_nodes_in_graph < k)
+                num_nodes = graph_nodes.size(0)
+                if num_nodes > k:
+                    indices = torch.randperm(num_nodes)[:k]  # Randomly select k indices
+                    selected_nodes = graph_nodes[indices]
+                else:
+                    # If fewer than k nodes, pad with zeros
+                    padding = torch.zeros(k - num_nodes, graph_nodes.size(1), device=graph_nodes.device)
+                    selected_nodes = torch.cat([graph_nodes, padding], dim=0)
+
+                g_embeds.append(selected_nodes)  # Shape: [k, hidden_dim]
+
+            # Stack into a single tensor: [batch_size, k, hidden_dim]
+            g_embeds = torch.stack(g_embeds, dim=0)
         else:
             raise ValueError("Pooling method not recognized.")
 
@@ -362,7 +432,7 @@ class GraphLLM(torch.nn.Module):
         # For mean pooling: [batch, 1, hidden_dim]
         # For topk/sag pooling: list of tensors, variable shapes per graph
         # For virtual pooling: [batch, num_virtual_tokens, hidden_dim]
-        if self.pooling_type in ['mean', 'virtual','diffpool','mincutpool']:
+        if self.pooling_type in ['mean', 'virtual','diffpool','mincutpool','randk']:
             # Apply projector elementwise: reshape to 2D, project-up, then reshape back to LLM Hidden Dim Size
             b, t, _ = graph_embeds.shape
             graph_embeds = graph_embeds.view(b * t, -1)
@@ -391,7 +461,7 @@ class GraphLLM(torch.nn.Module):
             inputs_embeds = self.word_embedding(torch.tensor(input_ids).to(self.model.device))
             
             # Determine graph tokens for this sample:
-            if self.pooling_type in ['mean', 'virtual','diffpool', 'mincutpool']:
+            if self.pooling_type in ['mean', 'virtual','diffpool', 'mincutpool','randk']:
                 graph_tokens = graph_embeds[i]  # shape: [t, 4096] where t is 1 or num_virtual_tokens
             elif self.pooling_type in ['topk', 'sag', 'sagM','none']:
                 graph_tokens = graph_embeds[i]  # already a tensor from the list for graph i
@@ -460,7 +530,7 @@ class GraphLLM(torch.nn.Module):
         bos_embeds = self.word_embedding(self.tokenizer(BOS, add_special_tokens=False, return_tensors='pt').input_ids[0].to(self.model.device))
         pad_embeds = self.word_embedding(torch.tensor(self.tokenizer.pad_token_id).to(self.model.device)).unsqueeze(0)
         graph_embeds ,_, _= self.encode_graphs(samples)
-        if self.pooling_type in ['mean', 'virtual','diffpool','mincutpool']:
+        if self.pooling_type in ['mean', 'virtual','diffpool','mincutpool','randk']:
             b, t, _ = graph_embeds.shape
             graph_embeds = graph_embeds.view(b*t, -1)
             graph_embeds = self.projector(graph_embeds)
@@ -475,7 +545,7 @@ class GraphLLM(torch.nn.Module):
         for i in range(batch_size):
             input_ids = descriptions.input_ids[i][:self.max_txt_len] + questions.input_ids[i] + eos_user_tokens.input_ids
             inputs_embeds = self.word_embedding(torch.tensor(input_ids).to(self.model.device))
-            if self.pooling_type in ['mean', 'virtual','diffpool', 'mincutpool']:
+            if self.pooling_type in ['mean', 'virtual','diffpool', 'mincutpool','randk']:
                 graph_tokens = graph_embeds[i]
             elif self.pooling_type in ['topk', 'sag', 'sagM', 'none']:
                 graph_tokens = graph_embeds[i]
