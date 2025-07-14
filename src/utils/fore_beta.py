@@ -1,7 +1,14 @@
 import os
 import re
 import pandas as pd
+from scipy.stats import beta
 from evaluate import *
+
+# Bayesian threshold for calling an example solvable
+POSTERIOR_THRESHOLD = 0.95
+# Beta prior hyperparameters (uniform prior)
+ALPHA0, BETA0 = 1, 1
+
 
 def get_row_predicate(dataset_key):
     """
@@ -32,7 +39,6 @@ def get_row_predicate(dataset_key):
 
     raise ValueError(f"Unknown dataset key {dataset_key}")
 
-
 def get_correct_mask(path):
     """
     Reads a JSONL file from path, infers dataset_key,
@@ -56,11 +62,9 @@ def get_correct_mask(path):
 
 def get_solvable_set_from_files(seed_paths):
     """
-    seed_paths: list of 4 file paths (for 4 random seeds)
-    Returns: (solvable_set, total_examples)
+    seed_paths: list of file paths for multiple seeds
+    Returns: (solvable_set, posterior_probs)
     """
-    assert len(seed_paths) == 4, "Must provide 4 seed file paths."
-
     masks = []
     for p in seed_paths:
         print(f"Loading: {p}")
@@ -68,43 +72,54 @@ def get_solvable_set_from_files(seed_paths):
         print(f"  → examples: {len(mask)}, correct: {sum(mask)}")
         masks.append(mask)
 
-    lengths = [len(m) for m in masks]
-    if len(set(lengths)) != 1:
-        raise AssertionError(f"Seed files have different row counts: {lengths}")
-    total = lengths[0]
+    total = len(masks[0])
+    # compute posterior probability for each index
+    posterior_probs = []
+    solvable = set()
 
-    solvable = {i for i in range(total) if all(m[i] for m in masks)}
-    return solvable, total
+    for i in range(total):
+        k = sum(mask[i] for mask in masks)
+        # posterior Beta(ALPHA0+k, BETA0 + n - k)
+        post = beta(ALPHA0 + k, BETA0 + len(masks) - k)
+        # probability theta > p0 where p0 = 1 / num_classes
+        # user should define NUM_CLASSES appropriately
+        p0 = 1.0 / NUM_CLASSES
+        prob = 1 - post.cdf(p0)
+        posterior_probs.append(prob)
+        if prob >= POSTERIOR_THRESHOLD:
+            solvable.add(i)
 
+    return solvable, posterior_probs
 
-def compute_fore(S_F, S_E, total_examples):
-    """ForE = |S(F) ∩ S(E)| / |P|"""
-    return len(S_F & S_E) / total_examples
-
-
+# In __main__, replace previous calls:
 if __name__ == "__main__":
-    # Replace with your actual path templates
+    # define NUM_CLASSES based on your dataset
+    NUM_CLASSES = 2
+    seeds = [0,1,2,3]
     # ExplaGraphs
     # S(F)=MLP, S(E)=GCN
-    base_F= ("/leonardo_scratch/fast/EUHPC_D12_046/ankit/outputs/expla_graphs/model_name_graph_llm_pooling_mean_llm_model_name_7b_llm_frozen_True_max_txt_len_512_max_new_tokens_32_gnn_model_name_mlp_gnn_num_virtual_tokens_5_patience_2_num_epochs_10_seed{}.csv")
-    base_E=("/leonardo_scratch/fast/EUHPC_D12_046/ankit/outputs/expla_graphs/model_name_graph_llm_pooling_mean_llm_model_name_7b_llm_frozen_True_max_txt_len_512_max_new_tokens_32_gnn_model_name_gcn_gnn_num_virtual_tokens_5_patience_2_num_epochs_10_seed{}.csv")
+    base_E = "/leonardo_scratch/fast/EUHPC_D12_046/ankit/outputs/expla_graphs/model_name_graph_llm_pooling_mean_llm_model_name_7b_llm_frozen_True_max_txt_len_512_max_new_tokens_32_gnn_model_name_gcn_gnn_num_virtual_tokens_5_patience_2_num_epochs_10_seed{}.csv"
+    base_F = "/leonardo_scratch/fast/EUHPC_D12_046/ankit/outputs/expla_graphs/model_name_graph_llm_pooling_mean_llm_model_name_7b_llm_frozen_True_max_txt_len_512_max_new_tokens_32_gnn_model_name_mlp_gnn_num_virtual_tokens_5_patience_2_num_epochs_10_seed{}.csv"
+
     # WebQSP
-    # S(F) = Transformer, S(E)= TransformerConv
-    # base_E= ("/leonardo_scratch/fast/EUHPC_D12_046/ankit/outputs/webqsp/model_name_graph_llm_pooling_mean_llm_model_name_7b_llm_frozen_True_max_txt_len_512_max_new_tokens_32_gnn_model_name_gt_gnn_num_virtual_tokens_5_patience_2_num_epochs_10_seed{}.csv")
-    #base_F=("/leonardo_scratch/fast/EUHPC_D12_046/ankit/outputs/webqsp/model_name_gf_llm_pooling_mean_llm_model_name_7b_llm_frozen_True_max_txt_len_512_max_new_tokens_32_gnn_model_name_sgformer_patience_2_num_epochs_10_seed{}.csv")
-    seeds = [0, 1, 2, 3]
+    #S(F)=MLP, S(E)=GCN
+    #base_E="/leonardo_scratch/fast/EUHPC_D12_046/ankit/outputs/webqsp/model_name_graph_llm_pooling_mean_llm_model_name_7b_llm_frozen_True_max_txt_len_512_max_new_tokens_32_gnn_model_name_mlp_gnn_num_virtual_tokens_5_patience_2_num_epochs_10_seed{}.csv"
+    #base_F="/leonardo_scratch/fast/EUHPC_D12_046/ankit/outputs/webqsp/model_name_graph_llm_pooling_mean_llm_model_name_7b_llm_frozen_True_max_txt_len_512_max_new_tokens_32_gnn_model_name_gcn_gnn_num_virtual_tokens_5_patience_2_num_epochs_10_seed{}.csv"
 
-    paths_F = [base_F.format(s) for s in seeds]
+
+
     paths_E = [base_E.format(s) for s in seeds]
+    paths_F = [base_F.format(s) for s in seeds]
 
-    S_F, total = get_solvable_set_from_files(paths_F)
-    S_E, _     = get_solvable_set_from_files(paths_E)
+    S_F, post_F = get_solvable_set_from_files(paths_F)
+    S_E, post_E = get_solvable_set_from_files(paths_E)
+    total = len(post_F)
     
-    # Compute ForE
-    fore = compute_fore(S_F, S_E, total)
+    # compute ForE with sets
+    fore = len(S_F & S_E) / len(post_F)
     print(f"ForE score: {fore:.4f}")
 
-    # Compute set differences and complements
+   # Compute set differences and complements
     only_E    = S_E - S_F
     only_F    = S_F - S_E
     neither   = set(range(total)) - (S_E | S_F)
