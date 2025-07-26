@@ -1,0 +1,68 @@
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:07<00:07,  7.44s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:09<00:00,  4.06s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:09<00:00,  4.56s/it]
+  0%|          | 0/10 [00:00<?, ?it/s] 10%|█         | 1/10 [00:05<00:46,  5.19s/it] 20%|██        | 2/10 [00:12<00:49,  6.23s/it] 30%|███       | 3/10 [00:19<00:45,  6.56s/it] 40%|████      | 4/10 [00:25<00:40,  6.68s/it] 50%|█████     | 5/10 [00:32<00:33,  6.78s/it] 60%|██████    | 6/10 [00:39<00:27,  6.84s/it] 70%|███████   | 7/10 [00:46<00:20,  6.85s/it] 80%|████████  | 8/10 [00:53<00:13,  6.88s/it] 90%|█████████ | 9/10 [01:00<00:06,  6.88s/it]100%|██████████| 10/10 [01:07<00:00,  6.90s/it]/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/cuda/memory.py:303: FutureWarning: torch.cuda.reset_max_memory_allocated now calls torch.cuda.reset_peak_memory_stats, which resets /all/ peak memory stats.
+  warnings.warn(
+
+  0%|          | 0/1 [00:00<?, ?it/s][A
+100%|██████████| 1/1 [00:00<00:00,  2.81it/s][A100%|██████████| 10/10 [01:12<00:00,  7.29s/it]
+100%|██████████| 1/1 [00:00<00:00,  2.71it/s]
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/cuda/memory.py:303: FutureWarning: torch.cuda.reset_max_memory_allocated now calls torch.cuda.reset_peak_memory_stats, which resets /all/ peak memory stats.
+  warnings.warn(
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:05<00:05,  5.61s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.31s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.66s/it]
+  0%|          | 0/10 [00:00<?, ?it/s] 10%|█         | 1/10 [00:03<00:35,  3.96s/it] 20%|██        | 2/10 [00:10<00:45,  5.75s/it] 30%|███       | 3/10 [00:18<00:44,  6.35s/it] 40%|████      | 4/10 [00:25<00:39,  6.64s/it] 50%|█████     | 5/10 [00:32<00:33,  6.79s/it] 60%|██████    | 6/10 [00:39<00:27,  6.89s/it] 70%|███████   | 7/10 [00:46<00:20,  6.95s/it] 80%|████████  | 8/10 [00:53<00:13,  6.99s/it] 90%|█████████ | 9/10 [01:00<00:07,  7.02s/it]100%|██████████| 10/10 [01:07<00:00,  7.03s/it]/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/cuda/memory.py:303: FutureWarning: torch.cuda.reset_max_memory_allocated now calls torch.cuda.reset_peak_memory_stats, which resets /all/ peak memory stats.
+  warnings.warn(
+
+  0%|          | 0/1 [00:00<?, ?it/s][A
+100%|██████████| 1/1 [00:02<00:00,  2.07s/it][A100%|██████████| 10/10 [01:14<00:00,  7.48s/it]
+100%|██████████| 1/1 [00:02<00:00,  2.08s/it]
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/cuda/memory.py:303: FutureWarning: torch.cuda.reset_max_memory_allocated now calls torch.cuda.reset_peak_memory_stats, which resets /all/ peak memory stats.
+  warnings.warn(
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:05<00:05,  5.51s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:06<00:00,  3.12s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:06<00:00,  3.48s/it]
+  0%|          | 0/10 [00:00<?, ?it/s] 10%|█         | 1/10 [00:03<00:35,  3.97s/it] 20%|██        | 2/10 [00:11<00:46,  5.77s/it] 30%|███       | 3/10 [00:18<00:44,  6.34s/it] 40%|████      | 4/10 [00:25<00:39,  6.65s/it] 50%|█████     | 5/10 [00:32<00:34,  6.82s/it] 60%|██████    | 6/10 [00:39<00:27,  6.92s/it] 70%|███████   | 7/10 [00:46<00:20,  6.95s/it] 80%|████████  | 8/10 [00:53<00:13,  6.97s/it] 90%|█████████ | 9/10 [01:00<00:07,  7.02s/it]100%|██████████| 10/10 [01:07<00:00,  7.05s/it]/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/cuda/memory.py:303: FutureWarning: torch.cuda.reset_max_memory_allocated now calls torch.cuda.reset_peak_memory_stats, which resets /all/ peak memory stats.
+  warnings.warn(
+
+  0%|          | 0/1 [00:00<?, ?it/s][A
+100%|██████████| 1/1 [00:02<00:00,  2.08s/it][A100%|██████████| 10/10 [01:14<00:00,  7.49s/it]
+100%|██████████| 1/1 [00:02<00:00,  2.09s/it]
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/cuda/memory.py:303: FutureWarning: torch.cuda.reset_max_memory_allocated now calls torch.cuda.reset_peak_memory_stats, which resets /all/ peak memory stats.
+  warnings.warn(
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:05<00:05,  5.83s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.28s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.66s/it]
+  0%|          | 0/10 [00:00<?, ?it/s] 10%|█         | 1/10 [00:04<00:37,  4.14s/it] 20%|██        | 2/10 [00:11<00:46,  5.84s/it] 30%|███       | 3/10 [00:18<00:44,  6.40s/it] 40%|████      | 4/10 [00:25<00:39,  6.66s/it] 50%|█████     | 5/10 [00:32<00:33,  6.79s/it] 60%|██████    | 6/10 [00:39<00:27,  6.90s/it] 70%|███████   | 7/10 [00:46<00:20,  6.94s/it] 80%|████████  | 8/10 [00:53<00:13,  6.99s/it] 90%|█████████ | 9/10 [01:00<00:07,  7.00s/it]100%|██████████| 10/10 [01:07<00:00,  7.00s/it]/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/cuda/memory.py:303: FutureWarning: torch.cuda.reset_max_memory_allocated now calls torch.cuda.reset_peak_memory_stats, which resets /all/ peak memory stats.
+  warnings.warn(
+
+  0%|          | 0/1 [00:00<?, ?it/s][A
+100%|██████████| 1/1 [00:02<00:00,  2.08s/it][A100%|██████████| 10/10 [01:14<00:00,  7.49s/it]
+100%|██████████| 1/1 [00:02<00:00,  2.09s/it]
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/cuda/memory.py:303: FutureWarning: torch.cuda.reset_max_memory_allocated now calls torch.cuda.reset_peak_memory_stats, which resets /all/ peak memory stats.
+  warnings.warn(

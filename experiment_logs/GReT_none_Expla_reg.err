@@ -1,0 +1,76 @@
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:07<00:07,  7.33s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:08<00:00,  3.98s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:08<00:00,  4.48s/it]
+  0%|          | 0/2070 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 177, in <module>
+    main(args)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 93, in main
+    loss = model(batch)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/src/model/graph_llm.py", line 339, in forward
+    inputs_embeds = torch.cat([bos_embeds, graph_tokens, inputs_embeds], dim=0)
+RuntimeError: Sizes of tensors must match except in dimension 0. Expected size 4096 but got size 1024 for tensor number 1 in the list.
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:05<00:05,  5.25s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:06<00:00,  3.09s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:06<00:00,  3.42s/it]
+  0%|          | 0/2070 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 177, in <module>
+    main(args)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 93, in main
+    loss = model(batch)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/src/model/graph_llm.py", line 339, in forward
+    inputs_embeds = torch.cat([bos_embeds, graph_tokens, inputs_embeds], dim=0)
+RuntimeError: Sizes of tensors must match except in dimension 0. Expected size 4096 but got size 1024 for tensor number 1 in the list.
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:05<00:05,  5.26s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:06<00:00,  2.98s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:06<00:00,  3.32s/it]
+  0%|          | 0/2070 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 177, in <module>
+    main(args)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 93, in main
+    loss = model(batch)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/src/model/graph_llm.py", line 339, in forward
+    inputs_embeds = torch.cat([bos_embeds, graph_tokens, inputs_embeds], dim=0)
+RuntimeError: Sizes of tensors must match except in dimension 0. Expected size 4096 but got size 1024 for tensor number 1 in the list.
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:05<00:05,  5.23s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:06<00:00,  2.95s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:06<00:00,  3.29s/it]
+  0%|          | 0/2070 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 177, in <module>
+    main(args)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 93, in main
+    loss = model(batch)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/src/model/graph_llm.py", line 339, in forward
+    inputs_embeds = torch.cat([bos_embeds, graph_tokens, inputs_embeds], dim=0)
+RuntimeError: Sizes of tensors must match except in dimension 0. Expected size 4096 but got size 1024 for tensor number 1 in the list.

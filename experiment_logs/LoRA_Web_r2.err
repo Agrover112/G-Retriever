@@ -1,0 +1,190 @@
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:06<00:06,  6.66s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:08<00:00,  3.71s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:08<00:00,  4.15s/it]
+  0%|          | 0/3530 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 177, in <module>
+    main(args)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 93, in main
+    loss = model(batch)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/src/model/llm.py", line 137, in forward
+    outputs = self.model(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/peft/peft_model.py", line 1719, in forward
+    return self.base_model(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/peft/tuners/tuners_utils.py", line 197, in forward
+    return self.model.forward(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/utils/deprecation.py", line 172, in wrapped_func
+    return func(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 842, in forward
+    outputs = self.model(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 594, in forward
+    layer_outputs = decoder_layer(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 336, in forward
+    hidden_states, self_attn_weights = self.self_attn(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 275, in forward
+    query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 173, in apply_rotary_pos_emb
+    q_embed = (q * cos) + (rotate_half(q) * sin)
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 72.00 MiB (GPU 0; 63.42 GiB total capacity; 59.95 GiB already allocated; 17.31 MiB free; 62.09 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.40s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:06<00:00,  2.76s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:06<00:00,  3.00s/it]
+  0%|          | 0/3530 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 177, in <module>
+    main(args)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 93, in main
+    loss = model(batch)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/src/model/llm.py", line 137, in forward
+    outputs = self.model(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/peft/peft_model.py", line 1719, in forward
+    return self.base_model(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/peft/tuners/tuners_utils.py", line 197, in forward
+    return self.model.forward(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/utils/deprecation.py", line 172, in wrapped_func
+    return func(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 842, in forward
+    outputs = self.model(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 594, in forward
+    layer_outputs = decoder_layer(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 336, in forward
+    hidden_states, self_attn_weights = self.self_attn(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 271, in forward
+    key_states = self.k_proj(hidden_states).view(hidden_shape).transpose(1, 2)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/linear.py", line 114, in forward
+    return F.linear(input, self.weight, self.bias)
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 36.00 MiB (GPU 0; 63.42 GiB total capacity; 59.83 GiB already allocated; 29.31 MiB free; 62.07 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.37s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:05<00:00,  2.62s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:05<00:00,  2.88s/it]
+  0%|          | 0/3530 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 177, in <module>
+    main(args)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 93, in main
+    loss = model(batch)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/src/model/llm.py", line 137, in forward
+    outputs = self.model(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/peft/peft_model.py", line 1719, in forward
+    return self.base_model(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/peft/tuners/tuners_utils.py", line 197, in forward
+    return self.model.forward(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/utils/deprecation.py", line 172, in wrapped_func
+    return func(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 842, in forward
+    outputs = self.model(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 594, in forward
+    layer_outputs = decoder_layer(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 336, in forward
+    hidden_states, self_attn_weights = self.self_attn(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 275, in forward
+    query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 174, in apply_rotary_pos_emb
+    k_embed = (k * cos) + (rotate_half(k) * sin)
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 72.00 MiB (GPU 0; 63.42 GiB total capacity; 59.82 GiB already allocated; 13.31 MiB free; 62.09 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.43s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:05<00:00,  2.63s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:05<00:00,  2.90s/it]
+  0%|          | 0/3530 [00:00<?, ?it/s]Traceback (most recent call last):
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 177, in <module>
+    main(args)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 93, in main
+    loss = model(batch)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/src/model/llm.py", line 137, in forward
+    outputs = self.model(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/peft/peft_model.py", line 1719, in forward
+    return self.base_model(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/peft/tuners/tuners_utils.py", line 197, in forward
+    return self.model.forward(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/utils/deprecation.py", line 172, in wrapped_func
+    return func(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 842, in forward
+    outputs = self.model(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 594, in forward
+    layer_outputs = decoder_layer(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 336, in forward
+    hidden_states, self_attn_weights = self.self_attn(
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 272, in forward
+    value_states = self.v_proj(hidden_states).view(hidden_shape).transpose(1, 2)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/peft/tuners/lora/layer.py", line 621, in forward
+    result = result + lora_B(lora_A(dropout(x))) * scaling
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/modules/dropout.py", line 59, in forward
+    return F.dropout(input, self.p, self.training, self.inplace)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch/nn/functional.py", line 1252, in dropout
+    return _VF.dropout_(input, p, training) if inplace else _VF.dropout(input, p, training)
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 72.00 MiB (GPU 0; 63.42 GiB total capacity; 59.78 GiB already allocated; 61.31 MiB free; 62.04 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF

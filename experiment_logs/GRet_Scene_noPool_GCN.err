@@ -1,0 +1,56 @@
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+Traceback (most recent call last):
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 177, in <module>
+    main(args)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 37, in main
+    dataset = load_dataset[args.dataset]()
+KeyError: 'scenegraphs'
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+Traceback (most recent call last):
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 177, in <module>
+    main(args)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 37, in main
+    dataset = load_dataset[args.dataset]()
+KeyError: 'scenegraphs'
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+Traceback (most recent call last):
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 177, in <module>
+    main(args)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 37, in main
+    dataset = load_dataset[args.dataset]()
+KeyError: 'scenegraphs'
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:68: UserWarning: An issue occurred while importing 'pyg-lib'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+/leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/torch_geometric/typing.py:124: UserWarning: An issue occurred while importing 'torch-sparse'. Disabling its usage. Stacktrace: /lib64/libm.so.6: version `GLIBC_2.29' not found (required by /leonardo_scratch/fast/EUHPC_D12_046/ankit/micromamba/envs/g_ret/lib/python3.9/site-packages/libpyg.so)
+  warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Tracking run with wandb version 0.19.7
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+Traceback (most recent call last):
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 177, in <module>
+    main(args)
+  File "/leonardo_scratch/fast/EUHPC_D12_046/ankit/G-Retriever/train.py", line 37, in main
+    dataset = load_dataset[args.dataset]()
+KeyError: 'scenegraphs'
