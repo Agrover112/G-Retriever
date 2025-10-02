@@ -14,8 +14,8 @@ load_model = {
 
 # Replace the following with the model paths
 llama_model_path = {
-    "7b": "/leonardo_scratch/fast/EUHPC_D12_046/ankit/llama2-7b-hf",
-    "7b_chat": "/leonardo_scratch/fast/EUHPC_D12_046/ankit/llama2-7b-chat-hf/",
-    "13b": "/leonardo_scratch/fast/EUHPC_D12_046/ankit/llama2-13b-hf",
-    "13b_chat": "/leonardo_scratch/fast/EUHPC_D12_046/ankit/llama2-13-chat-hf",
+    "7b": "/gpfs/projects/ehpc250/ankit/llama2-7b-hf",
+    "7b_chat": "/gpfs/projects/ehpc250/ankit/llama2-7b-chat-hf/",
+    "13b": "/gpfs/projects/ehpc250/ankit/llama2-13b-hf",
+    "13b_chat": "/gpfs/projects/ehpc250/ankit/llama2-13-chat-hf",
 }

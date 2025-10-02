@@ -4,7 +4,7 @@ import torch
 from torch.utils.data import Dataset
 
 
-PATH = 'dataset/expla_graphs'
+PATH = '/gpfs/projects/ehpc250/ankit/G-Retriever/dataset/expla_graphs'
 
 
 class ExplaGraphsDataset(Dataset):
@@ -42,13 +42,10 @@ class ExplaGraphsDataset(Dataset):
         # Load the saved indices
         with open(f'{PATH}/split/train_indices.txt', 'r') as file:
             train_indices = [int(line.strip()) for line in file]
-
         with open(f'{PATH}/split/val_indices.txt', 'r') as file:
             val_indices = [int(line.strip()) for line in file]
-
         with open(f'{PATH}/split/test_indices.txt', 'r') as file:
             test_indices = [int(line.strip()) for line in file]
-
         return {'train': train_indices, 'val': val_indices, 'test': test_indices}
 
 

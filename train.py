@@ -22,12 +22,17 @@ def main(args):
 
     # Step 1: Set up wandb
     seed = args.seed
-    wandb.init(project=f"{args.project}",
-               name=f"{args.dataset}_{args.model_name}_{args.pooling}_{args.gnn_num_virtual_tokens}seed{seed}",
-               config=args,mode="offline")
+    wandb.init(project=f"{args.project}",name=f"{args.dataset}_{args.model_name}_{args.pooling}_{args.gnn_num_virtual_tokens}_{args.pool_ratio}_{args.lora_r}_{args.lora_alpha}_{args.lora_dropout}seed{seed}",config=args,mode="offline")
+
+    #wandb.init(project=f"{args.project}",name=f"{args.dataset}_{args.model_name}_{args.pooling}_{args.gnn_num_virtual_tokens}seed{seed}",config=args,mode="offline")
+
+
 
     seed_everything(seed=args.seed)
     print("WE PRINTING THE ARGS",args)
+
+    project_root_path = os.path.dirname(os.path.abspath(__file__))
+    print(f"Project Root determined to be: {project_root_path}")
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     torch.cuda.empty_cache()
@@ -149,7 +154,8 @@ def main(args):
 
     # Step 5. Evaluating
     os.makedirs(f'{args.output_dir}/{args.dataset}', exist_ok=True)
-    path = f'{args.output_dir}/{args.dataset}/model_name_{args.model_name}_pooling_{args.pooling}_llm_model_name_{args.llm_model_name}_llm_frozen_{args.llm_frozen}_max_txt_len_{args.max_txt_len}_max_new_tokens_{args.max_new_tokens}_gnn_model_name_{args.gnn_model_name}_gnn_num_virtual_tokens_{args.gnn_num_virtual_tokens}_patience_{args.patience}_num_epochs_{args.num_epochs}_seed{seed}.csv'
+    path = f'{args.output_dir}/{args.dataset}/model_name_{args.model_name}_pooling_{args.pooling}_llm_model_name_{args.llm_model_name}_llm_frozen_{args.llm_frozen}_lora_r_{args.lora_r}_lora_alpha_{args.lora_alpha}_lora_dropout_{args.lora_dropout}_max_txt_len_{args.max_txt_len}_max_new_tokens_{args.max_new_tokens}_gnn_model_name_{args.gnn_model_name}_gnn_num_virtual_tokens_{args.pool_ratio}_{args.gnn_num_virtual_tokens}_patience_{args.patience}_num_epochs_{args.num_epochs}_seed{seed}.csv'
+    #path = f'{args.output_dir}/{args.dataset}/model_name_{args.model_name}_pooling_{args.pooling}_llm_model_name_{args.llm_model_name}_llm_frozen_{args.llm_frozen}_max_txt_len_{args.max_txt_len}_max_new_tokens_{args.max_new_tokens}_gnn_model_name_{args.gnn_model_name}_gnn_num_virtual_tokens_{args.gnn_num_virtual_tokens}_patience_{args.patience}_num_epochs_{args.num_epochs}_seed{seed}.csv'
     print(f'path: {path}')
 
     model = _reload_best_model(model, args)

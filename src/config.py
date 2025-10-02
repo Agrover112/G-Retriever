@@ -30,6 +30,9 @@ def parse_args_llama():
     parser.add_argument("--llm_model_name", type=str, default='7b')
     parser.add_argument("--llm_model_path", type=str, default='')
     parser.add_argument("--llm_frozen", type=str, default='True')
+    parser.add_argument("--lora_r", type=int, default=2)  # LoRA parameters
+    parser.add_argument("--lora_alpha", type=int, default=4)
+    parser.add_argument("--lora_dropout", type=float, default=0.05)
     parser.add_argument("--llm_num_virtual_tokens", type=int, default=10)
     parser.add_argument("--output_dir", type=str, default='output')
     parser.add_argument("--max_txt_len", type=int, default=512)

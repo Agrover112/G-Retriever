@@ -46,6 +46,10 @@ class GraphLLM(torch.nn.Module):
         self.pooling_type = args.pooling  #  ['mean', 'topk', 'sag', or 'virtual']
         self.pool_ratio = args.pool_ratio  #  ratio for pooling (e.g., 0.5)
         self.gnn_num_virtual_tokens = args.gnn_num_virtual_tokens  # number of virtual tokens
+        
+        self.lora_r = args.lora_r   # LoRA Args
+        self.lora_alpha = args.lora_alpha 
+        self.lora_dropout = args.lora_dropout #0.05
 
         print('Loading LLAMA')
         kwargs = {
@@ -73,9 +77,9 @@ class GraphLLM(torch.nn.Module):
         else:
             print("Training LLAMA with LORA!")
             model = prepare_model_for_kbit_training(model)
-            lora_r: int = 8
-            lora_alpha: int = 16
-            lora_dropout: float = 0.05
+            lora_r: int = self.lora_r   # 16 LoRA Parameters
+            lora_alpha: int = self.lora_alpha #32
+            lora_dropout: float = self.lora_dropout #0.05
             lora_target_modules = [
                 "q_proj",
                 "v_proj",

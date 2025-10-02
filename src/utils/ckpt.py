@@ -36,7 +36,15 @@ def _save_checkpoint(model, optimizer, cur_epoch, args, is_best=False):
         "config": args,
         "epoch": cur_epoch,
     }
-    path = f'{args.output_dir}/{args.dataset}/model_name_{args.model_name}_llm_model_name_{args.llm_model_name}_llm_frozen_{args.llm_frozen}_max_txt_len_{args.max_txt_len}_max_new_tokens_{args.max_new_tokens}_gnn_model_name_{args.gnn_model_name}_patience_{args.patience}_num_epochs_{args.num_epochs}_seed{args.seed}_checkpoint_{"best" if is_best else cur_epoch}.pth'
+    lora_config_str = f"_lora_r_{args.lora_r}_lora_alpha_{args.lora_alpha}_lora_dropout_{args.lora_dropout}" if args.llm_frozen == 'False' else ""
+
+    pooling_config_str= f"_pooling_{args.pooling}"
+    if args.pooling in ['topk', 'sag', 'sagM']:
+        pooling_config_str += f"_pool_ratio_{args.pool_ratio}"
+    elif args.pooling in ['diffpool', 'mincutpool', 'virtual', 'randk', 'none']:
+        pooling_config_str += f"_gnn_num_virtual_tokens_{args.gnn_num_virtual_tokens}"
+
+    path = f'{args.output_dir}/{args.dataset}/model_name_{args.model_name}_llm_model_name_{args.llm_model_name}_llm_frozen_{args.llm_frozen}_max_txt_len_{args.max_txt_len}_max_new_tokens_{args.max_new_tokens}_gnn_model_name_{args.gnn_model_name}_{pooling_config_str}_patience_{args.patience}_num_epochs_{args.num_epochs}_{lora_config_str}_seed{args.seed}_checkpoint_{"best" if is_best else cur_epoch}.pth'
     print("Saving checkpoint at epoch {} to {}.".format(cur_epoch, path))
     torch.save(save_obj, path)
 
@@ -45,7 +53,17 @@ def _reload_best_model(model, args):
     """
     Load the best checkpoint for evaluation.
     """
-    checkpoint_path = f'{args.output_dir}/{args.dataset}/model_name_{args.model_name}_llm_model_name_{args.llm_model_name}_llm_frozen_{args.llm_frozen}_max_txt_len_{args.max_txt_len}_max_new_tokens_{args.max_new_tokens}_gnn_model_name_{args.gnn_model_name}_patience_{args.patience}_num_epochs_{args.num_epochs}_seed{args.seed}_checkpoint_best.pth'
+
+    lora_config_str = f"_lora_r_{args.lora_r}_lora_alpha_{args.lora_alpha}_lora_dropout_{args.lora_dropout}" if args.llm_frozen == 'False' else ""
+
+    pooling_config_str= f"_pooling_{args.pooling}"
+    if args.pooling in ['topk', 'sag', 'sagM']:
+        pooling_config_str += f"_pool_ratio_{args.pool_ratio}"
+    elif args.pooling in ['diffpool', 'mincutpool', 'virtual', 'randk', 'none']:
+        pooling_config_str += f"_gnn_num_virtual_tokens_{args.gnn_num_virtual_tokens}"
+
+    checkpoint_path = f'{args.output_dir}/{args.dataset}/model_name_{args.model_name}_llm_model_name_{args.llm_model_name}_llm_frozen_{args.llm_frozen}_max_txt_len_{args.max_txt_len}_max_new_tokens_{args.max_new_tokens}_gnn_model_name_{args.gnn_model_name}_{pooling_config_str}_patience_{args.patience}_num_epochs_{args.num_epochs}_{lora_config_str}_seed{args.seed}_checkpoint_best.pth'
+
 
     print("Loading checkpoint from {}.".format(checkpoint_path))
 
