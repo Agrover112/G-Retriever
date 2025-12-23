@@ -1,28 +1,4 @@
-# G-Retriever
-
-[![arXiv](https://img.shields.io/badge/arXiv-2402.07630-b31b1b.svg)](https://arxiv.org/abs/2402.07630)
-
-This repository contains the source code for the paper ["<u>G-Retriever: Retrieval-Augmented Generation for Textual Graph Understanding and Question Answering</u>"](https://arxiv.org/abs/2402.07630).
-
-We introduce **G-Retriever**, a flexible question-answering framework targeting real-world textual graphs, applicable to multiple applications including scene graph understanding, common sense reasoning, and knowledge graph reasoning.
-<img src="figs/chat.svg">
-
-**G-Retriever** integrates the strengths of Graph Neural Networks (GNNs), Large Language Models (LLMs), and Retrieval-Augmented Generation (RAG), and can be fine-tuned to enhance graph understanding via soft prompting.
-<img src="figs/overview.svg">
-
-## News
-[2024.09] [PyG 2.6](https://github.com/pyg-team/pytorch_geometric/releases/tag/2.6.0) now supports **G-Retriever**! 🎉 \[[Dataset](https://pytorch-geometric.readthedocs.io/en/latest/_modules/torch_geometric/datasets/web_qsp_dataset.html)\]\[[Model](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.models.GRetriever.html?highlight=gretriever)\]
-
-## Citation
-```
-@article{he2024g,
-  title={G-Retriever: Retrieval-Augmented Generation for Textual Graph Understanding and Question Answering},
-  author={He, Xiaoxin and Tian, Yijun and Sun, Yifei and Chawla, Nitesh V and Laurent, Thomas and LeCun, Yann and Bresson, Xavier and Hooi, Bryan},
-  journal={arXiv preprint arXiv:2402.07630},
-  year={2024}
-}
-```
-
+# GRetPool
 ## Environment setup
 ```
 conda create --name g_retriever python=3.9 -y
@@ -49,6 +25,10 @@ pip install scipy==1.12
 pip install protobuf
 ```
 
+    # Required modules to be loaded
+	    module load intel impi hdf5 mkl cuda/11.8 cudnn/9.0.0-cuda11 anaconda/2024.02 
+	# Activate Conda environment
+		micromamba activate micromamba/envs/g_ret/
 ## Download the Llama 2 Model
 1. Go to Hugging Face: https://huggingface.co/meta-llama/Llama-2-7b-hf. You will need to share your contact information with Meta to access this model.
 2. Sign up for a Hugging Face account (if you don’t already have one).
@@ -78,30 +58,57 @@ python -m src.dataset.preprocess.webqsp
 python -m src.dataset.webqsp
 ```
 
-## Training
-Replace path to the llm checkpoints in the `src/model/__init__.py`, then run
+## Experiments
 
-### 1) Inference-Only LLM
-```
-python inference.py --dataset scene_graphs --model_name inference_llm --llm_model_name 7b_chat
-```
-### 2) Frozen LLM + Prompt Tuning
-```
-# prompt tuning
-python train.py --dataset scene_graphs_baseline --model_name pt_llm
+This command showcases basic arguments that can be used for replicating experiments.
+    
+    python train.py \
+    --dataset <dataset> --model_name <model_type> --llm_frozen <True/False> \
+    --lora_r  <rank>  --lora_alpha  <2*rank> --lora_dropout <dropout> \
+    --pooling <graph_pooling_operator> \
+    --pool_ratio <compression>
+    --gnn_num_virtual_tokens  <GNN_ReadOut_Tokens> \
+    --seed  $seed
 
-# G-Retriever
-python train.py --dataset scene_graphs --model_name graph_llm
+## Pooling 
+
+The most basic approach is to either use 1 or all nodes as tokens. This is implemented using the `mean` pooling and using `all` options.
+
+    python train.py \
+    --dataset expla_graphs --model_name graph_llm --llm_frozen False \
+    --lora_r  4  --lora_alpha  8  --lora_dropout  0.05 \
+    --pooling mean/all
+
+There are two different types of graph pooling methods. One which perform pooling via clustering qand the other that perform pooling via pruning of nodes. Each of them however have different ways of combining node features after respective clustering or pruning step.
+In each case the arguments passed differ.
+
+###  Aggregation
+For **Clustering**, available `--pooling` options are `diffpool,mincutpool,randk,virtual`
+and we specify number of clusters using 
+`-- gnn_num_virtual_tokens`.
+
+    python train.py \
+    --dataset expla_graphs --model_name graph_llm --llm_frozen False \
+    --lora_r  4  --lora_alpha  8  --lora_dropout  0.05 \
+    --pooling diffpool --gnn_num_virtual_tokens  8 
+
+Note: Randk is simply selecting K random nodes, so it follows similar arguments but isn't performing any clustering. 
+
+
+### Pruning
+For **Pruning**, available `-- pooling` options are: `topk,sag`and we specify the pruning ratio  `-- pool_ratio` based on avg. no of nodes per graph for a given dataset
+
+    python train.py \
+    --dataset expla_graphs --model_name graph_llm --llm_frozen False \
+    --lora_r  4  --lora_alpha  8  --lora_dropout  0.05 \
+    --pooling sag --pool_ratio  1 
+
+In both cases we can keep an approximate number of output tokens by manipulating these arguments. A `--pool_ratio` 1 is used for ExplaGraphs and 0.44 is used for WebQSP.
+
+## Citation
 ```
 
-### 3) Tuned LLM
-```
-# finetune LLM with LoRA
-python train.py --dataset scene_graphs_baseline --model_name llm --llm_frozen False
-
-# G-Retriever with LoRA
-python train.py --dataset scene_graphs --model_name graph_llm --llm_frozen False
 ```
 
-## Reproducibility
-Use `run.sh` to run the codes and reproduce the published results in the main table.
+
+
