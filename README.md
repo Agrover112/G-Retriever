@@ -1,4 +1,7 @@
 # GRetPool
+
+<img width="3260" height="1568" alt="image" src="https://github.com/user-attachments/assets/8479a1d9-f0b1-4186-b63c-480a25655007" />
+
 ## Environment setup
 ```
 conda create --name g_retriever python=3.9 -y
